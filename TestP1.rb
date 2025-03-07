@@ -4,12 +4,16 @@ require_relative 'Dice'
 require_relative 'Shield'
 
 module Irrgarten
-  arma = Weapon.new(Dice.weapon_power(),Dice.uses_left())
-  escudo = Irrgarten::Shield.new(Dice.shield_power(),Dice.uses_left())
-
+  arma = Weapon.new(Dice.weapon_power,Dice.uses_left)
+  discard = false
+  contador = 0
+  for i in (0..99)
+    discard = arma.discard
+    puts(discard)
+    if(discard)
+      contador +=1
+    end
+  end
   puts(arma.to_s)
-  puts(escudo.to_s)
-
-  puts("Me descarto: " + arma.discard().to_s)
-  puts("Me descarto: " + escudo.discard().to_s)
+  puts(contador)
 end

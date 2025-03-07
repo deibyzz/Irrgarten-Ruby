@@ -9,7 +9,7 @@ module Irrgarten
       @@SHIELDS_REWARD=3
       @@HEALTH_REWARD=5
       @@MAX_ATTACK=3.0
-      @@MAX_SHIELD=2.0dingadingadinga
+      @@MAX_SHIELD=2.0
       @@generator = Random.new
 
     def self.random_pos(max)
@@ -66,8 +66,8 @@ module Irrgarten
 
     def self.discard_element(usesLeft)
       discard = false
-      conditioning = @@MAX_USES-usesLeft
-      if(self.uses_left() < conditioning)
+      conditioning = usesLeft.fdiv(@@MAX_USES)
+      if(@@generator.rand()>=conditioning)
         discard=true
       end
       discard
