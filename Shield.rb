@@ -1,7 +1,8 @@
 #encoding:utf-8
+require_relative 'Dice'
 module Irrgarten
   class Shield
-    def Initialize(p,u)
+    def initialize(p,u)
       @protection = p
       @uses = u
     end
@@ -17,7 +18,11 @@ module Irrgarten
     end
   
     def to_s()
-      return ("W["+protection+","+uses+"]")
+      return ("S["+@protection.to_s+","+@uses.to_s+"]")
+    end
+
+    def discard()
+      Dice.discard_element(@uses)
     end
   end
 end

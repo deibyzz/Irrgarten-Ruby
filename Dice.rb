@@ -1,7 +1,6 @@
 #encoding:utf-8
 module Irrgarten
   class Dice
-    def Initialize()
       @@MAX_USES=5
       @@MAX_INTELLIGENCE=10.0
       @@MAX_STRENGTH=10.0
@@ -10,9 +9,8 @@ module Irrgarten
       @@SHIELDS_REWARD=3
       @@HEALTH_REWARD=5
       @@MAX_ATTACK=3.0
-      @@MAX_SHIELD=2.0
+      @@MAX_SHIELD=2.0dingadingadinga
       @@generator = Random.new
-    end
 
     def self.random_pos(max)
       @@generator.rand(max)
@@ -32,9 +30,9 @@ module Irrgarten
 
     def self.resurrect_player()
       resurrect = false
-      if(@@generator.rand() < @@RESURRECT_PROB){
+      if(@@generator.rand() < @@RESURRECT_PROB)
         resurrect = true
-      }
+      end
       resurrect
     end
 
@@ -50,4 +48,29 @@ module Irrgarten
       @@generator.rand(@@HEALTH_REWARD+1)
     end
 
-    def self.
+    def self.weapon_power()
+      @@generator.rand(@@MAX_ATTACK)
+    end
+
+    def self.shield_power()
+      @@generator.rand(@@MAX_SHIELD)
+    end
+
+    def self.uses_left()
+      @@generator.rand(@@MAX_USES)
+    end
+
+    def self.intensity(competence)
+      @@generator.rand(competence)
+    end
+
+    def self.discard_element(usesLeft)
+      discard = false
+      conditioning = @@MAX_USES-usesLeft
+      if(self.uses_left() < conditioning)
+        discard=true
+      end
+      discard
+    end
+  end
+end
