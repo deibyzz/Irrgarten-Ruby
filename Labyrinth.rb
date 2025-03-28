@@ -1,0 +1,145 @@
+#encoding:utf-8
+require_relative 'Monster'
+require_relative 'Player'
+require_relative 'Dice'
+module Irrgarten
+  class Labyrinth
+    @@BLOCK_CHAR = 'X'
+    @@EMPTY_CHAR = '-'
+    @@MONSTER_CHAR = 'M'
+    @@COMBAT_CHAR = 'C'
+    @@EXIT_CHAR = 'E'
+    @@ROW=0
+    @@COL=1
+
+    def initialize(nrows,ncols,exitrow,exitcol)
+      @nrows=nrows
+      @ncols=ncols
+      @exitrow=exitrow
+      @exitcol=exitcol
+      @players = Array.new(nrows) {Array.new(ncols)}
+      @monsters = Array.new(nrows) {Array.new(ncols)}
+      @squares = Array.new(nrows) {Array.new(ncols,@EMPTY_CHAR)}
+    end
+
+    def spread_players(player_list)
+
+    end
+
+    def have_a_winner
+      players[@exitrow][@exitcol] != nil
+    end
+
+    def to_s
+      map = ""
+      for row in @squares
+        for col in @squares[row]
+          map += @squares[row][col] + ' '
+        end
+        map += "\n"
+      end
+      map
+    end
+
+    def add_monster(row,col,monster)
+      if(pos_ok(row,col)){
+        if(empty_pos(row,col)){
+          @monsters[row][col] = monster
+        }
+      }
+    end
+
+    def put_player(directions, player)
+
+    end
+
+    def add_block(orientation,startrow,startcol,length)
+
+    end
+
+    def valid_moves(row,col)
+    end
+
+    private
+    def pos_ok(row,col)
+      ((0<=row) && (row < @nrows) && (0<=col) && (col < @ncols))
+    end
+
+    private
+    def empty_pos(row,col)
+      if(pos_ok(row,col))
+        @squares[row][col] == @EMPTY_CHAR
+    end
+
+    private
+    def monster_pos(row,col)
+      if(pos_ok(row,col))
+        @squares[row][col] == @MONSTER_CHAR
+    end
+
+    private
+    def exit_pos(row,col)
+      if(pos_ok(row,col))
+        @squares[row][col] == @EXIT_CHAR
+    end
+
+    private
+    def combat_pos(row,col)
+      if(pos_ok(row,col))
+        @squares[row][col] == @COMBAT_CHAR
+    end
+
+    private
+    def can_step_on(row,col)
+      (pos_ok(row,col)&&(emptyPos(row,col)||monsterPos(row,col)||exitPos(row,col)))
+    end
+
+    private
+    def update_old_pos(row,col)
+      if(pos_ok(row,col)){
+        if(combat_pos(row,col)){
+          @squares[row][col] = @MONSTER_CHAR
+        }
+        else{
+          @squares[row][col] = @EMPTY_CHAR
+        }
+      }
+    end
+
+    private
+    def dir2pos(row,col,direction)
+      pos = Array.new(2)
+      case direction
+      when DOWN
+        pos[@COL] -= 1
+      when UP
+        pos[@COL] += 1
+      when LEFT
+        pos[@COL] -= 1
+      when RIGHT
+        pos[@COL] += 1
+      end
+
+      pos
+    end
+
+    private
+    def random_empty_pos
+      pos = Array.new(2)
+      row = Dice.random_pos(@nrows)
+      col = Dice.random_pos(@ncols)
+      while(!pos_ok(row,col || !empty_pos(row,col)))
+        row = Dice.random_pos(@nrows)
+        col = Dice.random_pos(@ncols)
+      end
+
+      pos[@ROW]=row
+      pos[@COL]=col
+
+      pos
+    end
+
+    private
+    def put_player2D(oldrow,oldcol,row,col,player)
+    end
+end
