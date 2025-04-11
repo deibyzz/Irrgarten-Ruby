@@ -18,7 +18,7 @@ module Irrgarten
       @health=@INITIAL_HEALTH
       @row=@col=-1
       @weapons = Array.new(@@MAX_WEAPONS)
-      @shields = Array.new(@@MAX_SHIELD)
+      @shields = Array.new(@@MAX_SHIELDS)
       @consecutive_hits=0
     end
 

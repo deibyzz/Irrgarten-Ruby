@@ -2,6 +2,7 @@
 require_relative 'Monster'
 require_relative 'Player'
 require_relative 'Dice'
+require_relative 'Orientation'
 module Irrgarten
   class Labyrinth
     @@BLOCK_CHAR = 'X'
@@ -19,7 +20,8 @@ module Irrgarten
       @exitcol=exitcol
       @players = Array.new(nrows) {Array.new(ncols)}
       @monsters = Array.new(nrows) {Array.new(ncols)}
-      @squares = Array.new(nrows) {Array.new(ncols,@EMPTY_CHAR)}
+      @squares = Array.new(nrows) {Array.new(ncols) {@@EMPTY_CHAR}}
+      @squares[exitrow][exitcol] = @@EXIT_CHAR;
     end
 
     def spread_players(player_list)
@@ -32,8 +34,8 @@ module Irrgarten
 
     def to_s
       map = ""
-      for row in @squares
-        for col in @squares[row]
+      for row in 0...@nrows
+        for col in 0...@ncols
           map += @squares[row][col] + ' '
         end
         map += "\n"
@@ -42,11 +44,11 @@ module Irrgarten
     end
 
     def add_monster(row,col,monster)
-      if(pos_ok(row,col)){
-        if(empty_pos(row,col)){
+      if(pos_ok(row,col))
+        if(empty_pos(row,col))
           @monsters[row][col] = monster
-        }
-      }
+        end
+      end
     end
 
     def put_player(directions, player)
@@ -54,7 +56,22 @@ module Irrgarten
     end
 
     def add_block(orientation,startrow,startcol,length)
+        incRow = 0
+        incCol = 0
+        row = startrow
+        col = startcol
+        if(orientation == Orientation::VERTICAL)
+          incRow = 1
+        else
+          incCol = 1
+        end
 
+        while(pos_ok(row,col) && empty_pos(row,col) && length > 0)
+          @squares[row][col] = @@BLOCK_CHAR
+          row += incRow
+          col += incCol
+          length -= 1
+        end
     end
 
     def valid_moves(row,col)
@@ -68,25 +85,29 @@ module Irrgarten
     private
     def empty_pos(row,col)
       if(pos_ok(row,col))
-        @squares[row][col] == @EMPTY_CHAR
+        @squares[row][col] == @@EMPTY_CHAR
+      end
     end
 
     private
     def monster_pos(row,col)
       if(pos_ok(row,col))
-        @squares[row][col] == @MONSTER_CHAR
+        @squares[row][col] == @@MONSTER_CHAR
+      end
     end
 
     private
     def exit_pos(row,col)
       if(pos_ok(row,col))
-        @squares[row][col] == @EXIT_CHAR
+        @squares[row][col] == @@EXIT_CHAR
+      end
     end
 
     private
     def combat_pos(row,col)
       if(pos_ok(row,col))
-        @squares[row][col] == @COMBAT_CHAR
+        @squares[row][col] == @@COMBAT_CHAR
+      end
     end
 
     private
@@ -96,14 +117,13 @@ module Irrgarten
 
     private
     def update_old_pos(row,col)
-      if(pos_ok(row,col)){
-        if(combat_pos(row,col)){
-          @squares[row][col] = @MONSTER_CHAR
-        }
-        else{
-          @squares[row][col] = @EMPTY_CHAR
-        }
-      }
+      if(pos_ok(row,col))
+        if(combat_pos(row,col))
+          @squares[row][col] = @@MONSTER_CHAR
+        else
+          @squares[row][col] = @@EMPTY_CHAR
+        end
+      end
     end
 
     private
@@ -133,8 +153,8 @@ module Irrgarten
         col = Dice.random_pos(@ncols)
       end
 
-      pos[@ROW]=row
-      pos[@COL]=col
+      pos[@@ROW]=row
+      pos[@@COL]=col
 
       pos
     end
@@ -142,4 +162,5 @@ module Irrgarten
     private
     def put_player2D(oldrow,oldcol,row,col,player)
     end
+  end
 end

@@ -2,8 +2,8 @@
 require_relative 'Monster'
 require_relative 'Dice'
 require_relative 'Shield'
+require_relative 'Game'
 
 module Irrgarten
-  monstruo = Monster.new("Dinga",Dice.random_intelligence(),Dice.random_strength())
-  puts(monstruo.to_s)
+  partida = Game.new(5)
 end
