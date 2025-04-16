@@ -6,7 +6,7 @@ module Irrgarten
   class Player
     @@MAX_WEAPONS=2
     @@MAX_SHIELDS=3
-    @@INITIAL_HEALTH=5
+    @@INITIAL_HEALTH=10
     @@HITS2LOSE=3
     @@NULL_POS=-1
 
