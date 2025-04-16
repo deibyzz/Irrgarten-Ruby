@@ -1,24 +1,24 @@
 #encoding:utf-8
 require_relative 'Dice'
 module Irrgarten
-  class Weapon
+  class Shield
     def initialize(p,u)
-      @power = p
+      @protection = p
       @uses = u
     end
   
     public
-    def attack()
-      ap = 0
-      if(uses > 0)
-        ap = power
-        uses -= 1
+    def protect()
+      dp = 0
+      if(@uses > 0)
+        dp = @protection
+        @uses -= 1
       end
-      return ap
+      return dp
     end
   
     def to_s()
-      return ("W["+@power.to_s+","+@uses.to_s+"]")
+      return ("S["+@protection.to_s+","+@uses.to_s+"]")
     end
 
     def discard()

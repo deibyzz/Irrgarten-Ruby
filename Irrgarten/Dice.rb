@@ -57,7 +57,7 @@ module Irrgarten
     end
 
     def self.uses_left()
-      @@generator.rand(@@MAX_USES)
+      @@generator.rand(@@MAX_USES+1)
     end
 
     def self.intensity(competence)
@@ -66,8 +66,7 @@ module Irrgarten
 
     def self.discard_element(usesLeft)
       discard = false
-      conditioning = usesLeft.fdiv(@@MAX_USES)
-      if(@@generator.rand()>=conditioning)
+      if(self.uses_left()>=usesLeft)
         discard=true
       end
       discard

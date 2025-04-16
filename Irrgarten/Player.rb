@@ -15,10 +15,10 @@ module Irrgarten
       @number = "#{number}"
       @intelligence=intelligence
       @strength=strength
-      @health=@INITIAL_HEALTH
-      @row=@col=-1
-      @weapons = Array.new(@@MAX_WEAPONS)
-      @shields = Array.new(@@MAX_SHIELDS)
+      @health=@@INITIAL_HEALTH
+      @row=@col=@@NULL_POS
+      @weapons = Array.new
+      @shields = Array.new
       @consecutive_hits=0
     end
 
@@ -38,11 +38,16 @@ module Irrgarten
     end
 
     def dead
-      health <= 0
+      @health <= 0
     end
 
     def move(direction,valid_moves)
-
+      contained = valid_moves.include?(direction)
+      move_dir = direction
+      if(!(valid_moves.empty? || contained))
+        move_dir = valid_moves[0]
+      end
+      move_dir
     end
 
     def attack
@@ -50,11 +55,21 @@ module Irrgarten
     end
 
     def defend(recieved_attack)
-
+      manage_hit(recieved_attack)
     end
 
     def recieve_reward
+      wreward = Dice.weapons_reward()
+      sreward = Dice.shields_reward()
+      for i in 1...wreward
+        recieve_weapon(new_weapon())
+      end
 
+      for i in 1...sreward
+        recieve_shield(new_shield())
+      end
+
+      @health += Dice.health_reward()
     end
 
     def to_s
@@ -69,17 +84,33 @@ module Irrgarten
         string += @shields[i].to_s + ','
       end 
 
-      string += @weapons.last.to_s + '}'
+      string += @shields.last.to_s + '}'
     end
 
     private
     def recieve_weapon(weapon)
+      for w in @weapons
+        if(w.discard())
+          @weapons.delete(w)
+        end
+      end
 
+      if(@weapons.size() < @@MAX_WEAPONS)
+        @weapons << weapon
+      end
     end
 
     private
     def recieve_shield(shield)
-      
+      for s in @shields
+        if(s.discard())
+          @shields.delete(s)
+        end
+      end
+
+      if(@shields.size() < @@MAX_SHIELDS)
+        @shields << shield
+      end
     end
 
     private
@@ -88,15 +119,17 @@ module Irrgarten
     end
 
     private
-    def new_weapon
+    def new_shield
       Shield.new(Dice.shield_power,Dice.uses_left)
     end
 
     private
     def sum_weapons
       sum = 0
-      for weapon in @weapons do
-        sum += weapon.attack
+      if(!@weapons.empty?)
+        for weapon in @weapons do
+          sum += weapon.attack
+        end
       end
       sum
     end
@@ -104,20 +137,37 @@ module Irrgarten
     private
     def sum_shields
       sum = 0
-      for shield in @shields do
-        sum += shield.defend
+      if(!@shields.empty?)
+        for shield in @shields do
+          sum += shield.protect
+        end
       end
       sum
     end
 
     private
     def defensive_energy
-      intelligence + self.sum_shields
+      @intelligence + self.sum_shields
     end
 
     private
     def manage_hit(recieved_attack)
+      defense = defensive_energy()
+      lose = nil
+      if(defense < recieved_attack)
+        got_wounded()
+        inc_consecutive_hits()
+      else
+        reset_hits()
+      end
 
+      if(@consecutive_hits == @@HITS2LOSE || dead())
+        reset_hits()
+        lose = true
+      else
+        lose = false
+      end
+      lose
     end
 
     private
@@ -134,6 +184,5 @@ module Irrgarten
     def inc_consecutive_hits
       @consecutive_hits += 1
     end
-
   end
 end

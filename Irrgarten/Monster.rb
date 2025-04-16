@@ -18,7 +18,14 @@ module Irrgarten
       Dice.intensity(@strength)
     end
     def defend(recieved_attack)
+      if(!dead())
+        defense = Dice.intensity(@intelligence)
+        if(defense < recieved_attack)
+          got_wounded()
+        end
+      end
 
+      dead()
     end
     def set_pos(row,col)
       @row = row

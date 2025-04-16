@@ -25,11 +25,14 @@ module Irrgarten
     end
 
     def spread_players(player_list)
-
+      for player in player_list
+        pos = random_empty_pos()
+        put_player2D(-1,-1,pos[@@ROW],pos[@@COL],player) #Magic numbers??
+      end
     end
 
     def have_a_winner
-      players[@exitrow][@exitcol] != nil
+      @players[@exitrow][@exitcol] != nil
     end
 
     def to_s
@@ -47,12 +50,17 @@ module Irrgarten
       if(pos_ok(row,col))
         if(empty_pos(row,col))
           @monsters[row][col] = monster
+          @squares[row][col] = @@MONSTER_CHAR
+          monster.set_pos(row,col)
         end
       end
     end
 
-    def put_player(directions, player)
-
+    def put_player(direction, player)
+      oldrow = player.row
+      oldcol = player.col
+      newpos = dir2pos(oldrow,oldcol,direction)
+      put_player2D(oldrow,oldcol,newpos[@@ROW],newpos[@@COL],player)
     end
 
     def add_block(orientation,startrow,startcol,length)
@@ -75,6 +83,20 @@ module Irrgarten
     end
 
     def valid_moves(row,col)
+      moves = Array.new
+      if(can_step_on(row+1,col))
+        moves.push(Directions::DOWN)
+      end
+      if(can_step_on(row-1,col))
+        moves.push(Directions::UP)
+      end
+      if(can_step_on(row,col+1))
+        moves.push(Directions::RIGHT)
+      end
+      if(can_step_on(row,col-1))
+        moves.push(Directions::LEFT)
+      end
+      moves
     end
 
     private
@@ -112,7 +134,7 @@ module Irrgarten
 
     private
     def can_step_on(row,col)
-      (pos_ok(row,col)&&(emptyPos(row,col)||monsterPos(row,col)||exitPos(row,col)))
+      (pos_ok(row,col)&&(empty_pos(row,col)||monster_pos(row,col)||exit_pos(row,col)))
     end
 
     private
@@ -128,16 +150,16 @@ module Irrgarten
 
     private
     def dir2pos(row,col,direction)
-      pos = Array.new(2)
+      pos = [row,col]
       case direction
-      when DOWN
-        pos[@COL] -= 1
-      when UP
-        pos[@COL] += 1
-      when LEFT
-        pos[@COL] -= 1
-      when RIGHT
-        pos[@COL] += 1
+      when Directions::DOWN
+        pos[@@ROW] += 1
+      when Directions::UP
+        pos[@@ROW] -= 1
+      when Directions::LEFT
+        pos[@@COL] -= 1
+      when Directions::RIGHT
+        pos[@@COL] += 1
       end
 
       pos
@@ -148,7 +170,7 @@ module Irrgarten
       pos = Array.new(2)
       row = Dice.random_pos(@nrows)
       col = Dice.random_pos(@ncols)
-      while(!pos_ok(row,col || !empty_pos(row,col)))
+      while(!pos_ok(row,col) || !empty_pos(row,col))
         row = Dice.random_pos(@nrows)
         col = Dice.random_pos(@ncols)
       end
@@ -161,6 +183,27 @@ module Irrgarten
 
     private
     def put_player2D(oldrow,oldcol,row,col,player)
+      output = nil
+      if(can_step_on(row,col))
+        if(pos_ok(oldrow,oldcol))
+          if(@players[oldrow][oldcol] == player)
+            update_old_pos(oldrow,oldcol)
+            @players[oldrow][oldcol] = nil
+          end
+        end
+
+        if(monster_pos(row,col))
+          @squares[row][col] = @@COMBAT_CHAR
+          output = @monsters[row][col]
+        else
+          @squares[row][col] = player.number
+        end
+
+        @players[row][col] = player
+        player.set_pos(row,col)
+      end
+
+      output
     end
   end
 end
