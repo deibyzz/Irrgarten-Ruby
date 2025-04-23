@@ -61,12 +61,17 @@ module Irrgarten
     def recieve_reward
       wreward = Dice.weapons_reward()
       sreward = Dice.shields_reward()
-      for i in 1...wreward
-        recieve_weapon(new_weapon())
+      puts "Número de armas: #{wreward}; Número de escudos: #{sreward}"
+      for i in 0...wreward
+        weapon = new_weapon()
+        puts "Se intentará añadir el arma: " << weapon.to_s
+        recieve_weapon(weapon)
       end
 
-      for i in 1...sreward
-        recieve_shield(new_shield())
+      for i in 0...sreward
+        shield = new_shield()
+        puts "Se intentará añadir el escudo: " << shield.to_s
+        recieve_shield(shield)
       end
 
       @health += Dice.health_reward()
@@ -74,13 +79,13 @@ module Irrgarten
 
     def to_s
       string = "#{@name} I: #{@intelligence} S:#{@strength} HP:#{@health} Pos: (#{@row},#{@col}) {"
-      for i in 0..@weapons.size()-1 do
+      for i in 0...@weapons.size()-1 do
         string += @weapons[i].to_s + ','
       end
 
       string += @weapons.last.to_s + "} {"
 
-      for i in 0..@shields.size()-1 do
+      for i in 0...@shields.size()-1 do
         string += @shields[i].to_s + ','
       end 
 
@@ -96,7 +101,7 @@ module Irrgarten
       end
 
       if(@weapons.size() < @@MAX_WEAPONS)
-        @weapons << weapon
+        @weapons.push(weapon)
       end
     end
 
@@ -109,7 +114,7 @@ module Irrgarten
       end
 
       if(@shields.size() < @@MAX_SHIELDS)
-        @shields << shield
+        @shields.push(shield)
       end
     end
 

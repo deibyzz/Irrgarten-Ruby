@@ -36,7 +36,7 @@ module Irrgarten
 
         monster = @labyrinth.put_player(direction,@current_player)
 
-        if(monster == nil)
+        if(monster == nil) #Para evitar pelear contra monstruos muertos añadir la condicion de monster.dead()
           log_no_monster()
         else
           manage_reward(combat(monster))

@@ -5,6 +5,7 @@ require_relative 'Dice'
 require_relative 'Orientation'
 module Irrgarten
   class Labyrinth
+    @@NULL_POS = -1
     @@BLOCK_CHAR = 'X'
     @@EMPTY_CHAR = '-'
     @@MONSTER_CHAR = 'M'
@@ -27,7 +28,7 @@ module Irrgarten
     def spread_players(player_list)
       for player in player_list
         pos = random_empty_pos()
-        put_player2D(-1,-1,pos[@@ROW],pos[@@COL],player) #Magic numbers??
+        put_player2D(@@NULL_POS,@@NULL_POS,pos[@@ROW],pos[@@COL],player)
       end
     end
 
@@ -161,7 +162,6 @@ module Irrgarten
       when Directions::RIGHT
         pos[@@COL] += 1
       end
-
       pos
     end
 

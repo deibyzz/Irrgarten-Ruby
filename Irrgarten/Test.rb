@@ -4,7 +4,7 @@ require_relative '../Controller/controller'
 require_relative 'Game'
 
 module Irrgarten
-  partida = Game.new(2)
+  partida = Game.new(1)
   controller = Control::Controller.new(partida,UI::TextUI.new)
   controller.play()
 end
