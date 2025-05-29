@@ -1,6 +1,7 @@
 #encoding_utf-8
 require_relative 'Monster'
 require_relative 'Player'
+require_relative 'FuzzyPlayer'
 require_relative 'Dice'
 require_relative 'GameCharacter'
 require_relative 'GameState'
@@ -151,6 +152,10 @@ module Irrgarten
     def manage_resurrection
       if(Dice.resurrect_player())
         @current_player.resurrect()
+        fuzzy = FuzzyPlayer.new(@current_player)
+        @players[@current_player_index] = fuzzy
+        @labyrinth.replace_player(@current_player,fuzzy);
+        @current_player = @players[@current_player_index]
         log_resurrected()
       else
         log_player_skip_turn()

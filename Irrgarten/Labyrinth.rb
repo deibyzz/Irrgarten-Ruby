@@ -40,7 +40,7 @@ module Irrgarten
       map = ""
       for row in 0...@nrows
         for col in 0...@ncols
-          map += @squares[row][col] + ' '
+          map += @squares[row][col].to_s + " "
         end
         map += "\n"
       end
@@ -98,6 +98,10 @@ module Irrgarten
         moves.push(Directions::LEFT)
       end
       moves
+    end
+
+    def replace_player(player,other)
+      @players[player.row][player.col] = other
     end
 
     private

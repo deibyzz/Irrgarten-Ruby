@@ -1,43 +1,31 @@
 #encoding:utf-8
 require_relative 'Dice'
+require_relative 'LabyrinthCharacter'
 module Irrgarten
-  class Monster
+  class Monster < LabyrinthCharacter
     @@INITIAL_HEALTH=5
-    @@NULL_POS=-1
     def initialize(name,intelligence,strength)
-      @name=name
-      @intelligence=intelligence
-      @strength=strength
-      @health=@@INITIAL_HEALTH
-      @row = @col = @@NULL_POS
+      super(name,intelligence,strength,@@INITIAL_HEALTH)
     end
-    def dead
-      @health <= 0
-    end
+
+    public_class_method :new
+
     def attack
       Dice.intensity(@strength)
     end
+
     def defend(recieved_attack)
       if(!dead())
-        defense = Dice.intensity(@intelligence)
-        if(defense < recieved_attack)
+        if(Dice.intensity(@intelligence) < recieved_attack)
           got_wounded()
         end
       end
 
       dead()
     end
-    def set_pos(row,col)
-      @row = row
-      @col = col
-    end
-    def to_s
-      "Monster: #{@name} I: #{@intelligence} S: #{@strength} HP: #{@health} Pos: (#{@row},#{@col})"
-    end
 
-    private
-    def got_wounded
-      @health -= 1
+    def to_s
+      return ("Monster:" + super)
     end
   end
 end

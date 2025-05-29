@@ -2,44 +2,40 @@
 require_relative 'Weapon'
 require_relative 'Shield'
 require_relative 'Dice'
+require_relative 'LabyrinthCharacter'
 module Irrgarten
-  class Player
+  class Player < LabyrinthCharacter
     @@MAX_WEAPONS=2
     @@MAX_SHIELDS=3
-    @@INITIAL_HEALTH=10
     @@HITS2LOSE=3
-    @@NULL_POS=-1
+    @@INITIAL_HEALTH = 10
 
     def initialize(number,intelligence,strength)
-      @name="Player #{number}"
-      @number = "#{number}"
-      @intelligence=intelligence
-      @strength=strength
-      @health=@@INITIAL_HEALTH
-      @row=@col=@@NULL_POS
+      super("Player #{number}",intelligence,strength, @@INITIAL_HEALTH)
+      @number = number
+      @consecutive_hits = 0
       @weapons = Array.new
       @shields = Array.new
-      @consecutive_hits=0
+      #Añadir WeaponCardDeck y ShieldCardDeck
+    end
+
+    public_class_method :new
+
+    def copy(other)
+      super(other)
+      @number = other.number
+      @weapons = other.weapons
+      @shields = other.shields
     end
 
     def resurrect
       @weapons.clear
       @shields.clear
       @health = @@INITIAL_HEALTH
+      reset_hits()
     end
 
-    attr_reader :row
-    attr_reader :col
-    attr_reader :number
-
-    def set_pos(row,col)
-      @row = row
-      @col = col
-    end
-
-    def dead
-      @health <= 0
-    end
+    attr_reader :number, :weapons, :shields
 
     def move(direction,valid_moves)
       contained = valid_moves.include?(direction)
@@ -64,13 +60,11 @@ module Irrgarten
       puts "Número de armas: #{wreward}; Número de escudos: #{sreward}"
       for i in 0...wreward
         weapon = new_weapon()
-        puts "Se intentará añadir el arma: " << weapon.to_s
         recieve_weapon(weapon)
       end
 
       for i in 0...sreward
         shield = new_shield()
-        puts "Se intentará añadir el escudo: " << shield.to_s
         recieve_shield(shield)
       end
 
@@ -78,7 +72,7 @@ module Irrgarten
     end
 
     def to_s
-      string = "#{@name} I: #{@intelligence} S:#{@strength} HP:#{@health} Pos: (#{@row},#{@col}) {"
+      string = super
       for i in 0...@weapons.size()-1 do
         string += @weapons[i].to_s + ','
       end
@@ -129,7 +123,7 @@ module Irrgarten
     end
 
     private
-    def sum_weapons
+    protected def sum_weapons
       sum = 0
       if(!@weapons.empty?)
         for weapon in @weapons do
@@ -140,7 +134,7 @@ module Irrgarten
     end
 
     private
-    def sum_shields
+    protected def sum_shields
       sum = 0
       if(!@shields.empty?)
         for shield in @shields do
@@ -151,7 +145,7 @@ module Irrgarten
     end
 
     private
-    def defensive_energy
+    protected def defensive_energy
       @intelligence + self.sum_shields
     end
 
@@ -178,11 +172,6 @@ module Irrgarten
     private
     def reset_hits
       @consecutive_hits=0
-    end
-
-    private
-    def got_wounded
-      @health -= 1
     end
 
     private

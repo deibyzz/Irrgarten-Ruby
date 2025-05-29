@@ -4,9 +4,7 @@ require_relative '../Irrgarten/Directions'
 
 module UI
 
-  class TextUI
-
-    #https://gist.github.com/acook/4190379
+  class TextUI    #https://gist.github.com/acook/4190379
     def read_char
       STDIN.echo = false
       STDIN.raw!

@@ -71,5 +71,14 @@ module Irrgarten
       end
       discard
     end
+
+    def self.next_step(preference, validMoves, intelligence)
+      direction = preference
+      if(@@generator.rand(@@MAX_INTELLIGENCE) > intelligence)
+        direction = validMoves[@@generator.rand(validMoves.size())]
+      end
+
+      direction
+    end
   end
 end
